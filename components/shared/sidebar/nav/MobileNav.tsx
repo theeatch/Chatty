@@ -12,10 +12,12 @@ import {
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { useConversation } from "@/hooks/useConvesation";
+import { ThemeToggle } from "@/components/ui/theme/theme-toggle";
+import { Badge } from "@/components/ui/badge";
 const MobileNav = () => {
   const paths = useNavigation();
 
-  const {isActive} = useConversation();
+  const { isActive } = useConversation();
 
   if (isActive) return null;
   return (
@@ -34,6 +36,11 @@ const MobileNav = () => {
                       >
                         {path.icon}
                       </Button>
+                      {path.count ? (
+                        <Badge className="absolute left-6 bottom-7">
+                          {path.count}
+                        </Badge>
+                      ) : null}
                       <TooltipContent>
                         <p>{path.name}</p>
                       </TooltipContent>
@@ -43,6 +50,9 @@ const MobileNav = () => {
               </li>
             );
           })}
+          <li>
+            <ThemeToggle />
+          </li>
           <li>
             <UserButton />
           </li>

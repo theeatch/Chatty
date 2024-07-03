@@ -11,6 +11,8 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme/theme-toggle";
+import { Badge } from "@/components/ui/badge";
 const DesktopNav = () => {
   const paths = useNavigation();
 
@@ -30,10 +32,15 @@ const DesktopNav = () => {
                       >
                         {path.icon}
                       </Button>
-                      <TooltipContent>
-                        <p>{path.name}</p>
-                      </TooltipContent>
+                      {path.count ? (
+                        <Badge className="absolute left-6 bottom-7">
+                          {path.count}
+                        </Badge>
+                      ) : null}
                     </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{path.name}</p>
+                    </TooltipContent>
                   </Tooltip>
                 </Link>
               </li>
@@ -42,6 +49,7 @@ const DesktopNav = () => {
         </ul>
       </nav>
       <div className="flex flex-col items-center gap-4">
+        <ThemeToggle />
         <UserButton />
       </div>
     </Card>
