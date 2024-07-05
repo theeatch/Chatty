@@ -27,6 +27,8 @@ const ConversationLayout = ({ children }: Props) => {
                   id={conversations.conversation._id}
                   imageUrl={conversations.otherMember?.imageUrl || ""}
                   username={conversations.otherMember?.username || ""}
+                  lastMessageContent={conversations.lastMessage?.content }
+                  lastMessageSender={conversations.lastMessage?.sender }
                 />
               );
             })
