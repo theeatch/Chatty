@@ -1,4 +1,4 @@
-import { CircleArrowLeft, Settings } from "lucide-react";
+import { CircleArrowLeft, Settings, User } from "lucide-react";
 import React from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
@@ -11,29 +11,42 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Id } from "@/convex/_generated/dataModel";
 
 type Props = {
   imageUrl?: string;
   name: string;
+  conversationId?: Id<"conversations">;
   options?: {
     label: string;
     destructive: boolean;
     onClick: () => void;
   }[];
+  openChatDetailsDialog?: () => void;
 };
 
-const Header = ({ imageUrl, name, options }: Props) => {
+const Header = ({ imageUrl, name, options, openChatDetailsDialog }: Props) => {
   return (
     <Card className="w-full flex rounded-lg items-center p-2 justify-between">
       <div className="flex items-center gap-2">
         <Link className="block lg:hidden" href="/conversations">
           <CircleArrowLeft />
         </Link>
-        <Avatar className="h-8 w-8">
-          <AvatarImage src={imageUrl} />
-          <AvatarFallback>{name.substring(0, 1)}</AvatarFallback>
-        </Avatar>
-        <h2 className="font-semibold">{name}</h2>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex gap-2 items-center">
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={imageUrl} />
+              <AvatarFallback>{name.substring(0, 1)}</AvatarFallback>
+            </Avatar>
+            <h2 className="font-semibold">{name}</h2>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem className="flex gap-2" onClick={openChatDetailsDialog}>
+              <User />
+              Open Profile
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       <div className="flex gap-2">
         {options ? (

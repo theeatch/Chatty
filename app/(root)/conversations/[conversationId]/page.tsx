@@ -11,6 +11,7 @@ import ChatInput from "./_components/input/ChatInput";
 import RemoveFriendDialog from "./_components/dialogs/RemoveFriendDialog";
 import DeleteGroupDialog from "./_components/dialogs/DeleteGroupDialog";
 import LeaveGroupDialog from "./_components/dialogs/LeaveGroupDialog";
+import ChatDetailsDialog from "./_components/dialogs/ChatDetailsDialog";
 
 type Props = {
   params: {
@@ -25,6 +26,7 @@ const ConversationPage = ({ params: { conversationId } }: Props) => {
     useState(false);
   const [leaveGroupDialogueOpen, setLeaveGroupDialogueOpen] = useState(false);
   const [deleteGroupDialogueOpen, setDeleteGroupDialogueOpen] = useState(false);
+  const [chatDetailsDialogOpen, setChatDetailsDialogOpen] = useState(false);
 
   return conversation === undefined ? (
     <div className="w-full h-full flex items-centers justify-center">
@@ -50,6 +52,11 @@ const ConversationPage = ({ params: { conversationId } }: Props) => {
         conversationId={conversationId}
         open={leaveGroupDialogueOpen}
         setOpen={setLeaveGroupDialogueOpen}
+      />
+      <ChatDetailsDialog
+        conversationId={conversationId}
+        open={chatDetailsDialogOpen}
+        setOpen={setChatDetailsDialogOpen}
       />
       <Header
         imageUrl={
@@ -88,6 +95,7 @@ const ConversationPage = ({ params: { conversationId } }: Props) => {
                 },
               ]
         }
+        openChatDetailsDialog={() => setChatDetailsDialogOpen(true)}
       />
       <Body />
       <ChatInput />
