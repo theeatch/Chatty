@@ -88,7 +88,6 @@ const getLastMessageDetails = async ({
 
   const sender = await ctx.db.get(message.senderId);
   
-
   if (!sender) return null;
 
   const content = getMessageContent(

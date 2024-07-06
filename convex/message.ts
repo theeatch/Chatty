@@ -1,7 +1,6 @@
 import { ConvexError, v } from "convex/values";
 import { mutation } from "./_generated/server";
 import { getUserByClerkId } from "./_utils";
-import { currentUser } from "@clerk/nextjs/server";
 
 export const create = mutation({
   args: {
