@@ -35,29 +35,22 @@ const Body = ({ members }: Props) => {
     }
   }, [messages, conversationId, markRead]);
 
-  const getSeenMessage = (messageId: Id<"messages">) => {
-    const seenUsers = members
-      .filter((member: { lastSeenMessage: Id<"messages">; }) => member.lastSeenMessage === messageId)
-      .map((user: { username: any; }) => user.username!.split(" ")[0]);
-
-    if (seenUsers.length === 0) return undefined;
-
-    return formatSeenBy(seenUsers);
-  };
-
   const formatSeenBy = (names: string[]) => {
     switch (names.length) {
       case 1:
-        <p className="text-muted-foreground text-sm text-right">{`Seen by ${names[0]}`}</p>;
+        return (
+          <p className="text-muted-foreground text-sm text-right">{`Seen by ${names[0]}`}</p>
+        );
       case 2:
-        <p className="text-muted-foreground text-sm text-right">{`Seen by ${names[0]} and ${names[1]}`}</p>;
-        defualt: return (
+        return (
+          <p className="text-muted-foreground text-sm text-right">{`Seen by ${names[0]} and ${names[1]}`}</p>
+        );
+      default:
+        return (
           <TooltipProvider>
             <Tooltip>
-              <p>
-                <p className="text-muted-foreground text-sm text-right">{`Seen by ${names[0]} and ${names[1]} and ${names.length - 2} more`}</p>
-                ;
-              </p>
+              <p className="text-muted-foreground text-sm text-right">{`Seen by ${names[0]} and ${names[1]} and ${names.length - 2} more`}</p>
+
               <TooltipContent>
                 <ul>
                   {names.map((name, index) => {
@@ -70,6 +63,20 @@ const Body = ({ members }: Props) => {
         );
     }
   };
+
+  const getSeenMessage = (messageId: Id<"messages">) => {
+    const seenUsers = members
+      .filter(
+        (member: { lastSeenMessage: Id<"messages"> }) =>
+          member.lastSeenMessage === messageId
+      )
+      .map((user: { username: any }) => user.username!.split(" ")[0]);
+
+    if (seenUsers.length === 0) return null;
+
+    return formatSeenBy(seenUsers);
+  };
+
   return (
     <div className="flex-1 w-full flex overflow-y-scroll flex-col-reverse gap-2 p-3 no-scrollbar">
       {messages?.map(
@@ -80,7 +87,7 @@ const Body = ({ members }: Props) => {
 
           const seenMessage = isCurrentUser
             ? getSeenMessage(message._id)
-            : undefined;
+            : null;
 
           return (
             <Message
