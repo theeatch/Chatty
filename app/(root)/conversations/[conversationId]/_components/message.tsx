@@ -62,8 +62,8 @@ const Message = ({
             {formatTime(createdAt)}
           </p>
         </div>
-      </div>
       {seen}
+      </div>
       <Avatar
         className={cn("relative h-8 w-8", {
           "order-2": fromCurrentUser,
