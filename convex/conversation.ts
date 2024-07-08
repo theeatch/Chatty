@@ -61,6 +61,7 @@ export const get = query({
           lastSeenMessage: otherMembership.lastSeenMessage,
         },
         otherMembers: null,
+        
       };
     } else {
       const otherMembers = await Promise.all(
@@ -74,6 +75,7 @@ export const get = query({
             }
             return {
               username: member.username,
+              _id: member._id,
             };
           })
       );
@@ -84,38 +86,39 @@ export const get = query({
 
 export const createGroup = mutation({
   args: {
-      name: v.string(),
-      members: v.array(v.id("users")),
+    name: v.string(),
+    members: v.array(v.id("users")),
   },
   handler: async (ctx, args) => {
-      const identity = await ctx.auth.getUserIdentity();
+    const identity = await ctx.auth.getUserIdentity();
 
-      if (!identity) {
-        throw new Error("unauthorized");
-      }
-  
-      const currentUser = await getUserByClerkId({
-        ctx,
-        clerkId: identity.subject,
-      });
-  
-      if (!currentUser) {
-        throw new ConvexError("User not found");
-      }
-      const conversationId = await ctx.db.insert("conversations", {
-          name: args.name,
-          isGroup: true,
-      });
+    if (!identity) {
+      throw new Error("unauthorized");
+    }
 
-      await Promise.all([...args.members, currentUser._id].map(async memberId=> {
-          await ctx.db.insert("conversationMembers", {
-              conversationId,
-              memberId,
-          });
-      }))
-  }
-})
+    const currentUser = await getUserByClerkId({
+      ctx,
+      clerkId: identity.subject,
+    });
 
+    if (!currentUser) {
+      throw new ConvexError("User not found");
+    }
+    const conversationId = await ctx.db.insert("conversations", {
+      name: args.name,
+      isGroup: true,
+    });
+
+    await Promise.all(
+      [...args.members, currentUser._id].map(async (memberId) => {
+        await ctx.db.insert("conversationMembers", {
+          conversationId,
+          memberId,
+        });
+      })
+    );
+  },
+});
 
 export const deleteGroup = mutation({
   args: {
@@ -205,7 +208,9 @@ export const leaveGroup = mutation({
     const membership = await ctx.db
       .query("conversationMembers")
       .withIndex("by_memberId_conversationId", (q) =>
-        q.eq("memberId", currentUser._id).eq("conversationId", args.conversationId)
+        q
+          .eq("memberId", currentUser._id)
+          .eq("conversationId", args.conversationId)
       )
       .unique();
 
@@ -214,5 +219,47 @@ export const leaveGroup = mutation({
     }
 
     await ctx.db.delete(membership._id);
+  },
+});
+
+export const markRead = mutation({
+  args: {
+    conversationId: v.id("conversations"),
+    messageId: v.id("messages"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError("unauthorized");
+    }
+
+    const currentUser = await getUserByClerkId({
+      ctx,
+      clerkId: identity.subject,
+    });
+
+    if (!currentUser) {
+      throw new ConvexError("User not found");
+    }
+
+    const membership = await ctx.db
+      .query("conversationMembers")
+      .withIndex("by_memberId_conversationId", (q) =>
+        q
+          .eq("memberId", currentUser._id)
+          .eq("conversationId", args.conversationId)
+      )
+      .unique();
+
+    if (!membership) {
+      throw new ConvexError("Not member of this group");
+    }
+
+    const lastMessage = await ctx.db.get(args.messageId);
+
+    await ctx.db.patch(membership._id, {
+      lastSeenMessage: lastMessage ? lastMessage._id : undefined,
+    });
   },
 });

@@ -32,7 +32,8 @@ const ChatDetailsDialog = ({ conversationId, open, setOpen }: Props) => {
                 {conversation?.otherMember?.username?.substring(0, 1)}
               </AvatarFallback>
             </Avatar>
-            {conversation?.otherMember?.username}
+            <h1 className="text-xl">{conversation?.otherMember?.username}</h1 >
+            
           </AlertDialogTitle>
         </AlertDialogHeader>
         <AlertDialogDescription>
