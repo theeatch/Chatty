@@ -11,7 +11,7 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { useConversation } from "@/hooks/useConvesation";
+import { useConversation } from "@/hooks/useConversation";
 import { ThemeToggle } from "@/components/ui/theme/theme-toggle";
 import { Badge } from "@/components/ui/badge";
 const MobileNav = () => {

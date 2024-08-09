@@ -2,7 +2,7 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
 import {cn} from "@/lib/utils"
-import { useConversation } from "@/hooks/useConvesation";
+import { useConversation } from "@/hooks/useConversation";
 
 type Props = React.PropsWithChildren<{
   title: string;
